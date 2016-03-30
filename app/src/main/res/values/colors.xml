@@ -4,7 +4,7 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
 
-    <color name="court">#bda26a</color>
+    <color name="court">#ffcd94</color>
     <color name="lines">#000000</color>
     <color name="score">#00ff00</color>
     <color name="miss">#ff0000</color>
