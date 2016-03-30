@@ -1,6 +1,8 @@
 package com.will.basketballrecorder;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -10,7 +12,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
-public class GameView extends View implements View.OnTouchListener {
+public class GameView extends View implements View.OnTouchListener, EventLabelCallback {
 
     private Paint mPaint;
     private Bitmap linesBitmap;
@@ -138,18 +140,50 @@ public class GameView extends View implements View.OnTouchListener {
 
         switch(action) {
             case MotionEvent.ACTION_UP:
-                // TODO:  launch event label fragment
-                // TODO:  get fragment return type and switch-case to set the appropriate color
-                mPaint.setColor(ContextCompat.getColor(getContext(), R.color.score));
-                mCanvas.drawCircle(x, y, DOT_PAINT_RADIUS, mPaint);
-                invalidate();
-                // TODO:  save the coordinates and event type into a file (JSON, SQLlite, or custom format)
+                selectEventLabel(x, y, this);
                 break;
             default:
                 break;
         }
-
         return true;
+    }
+
+    public void onEventLabelled(float x, float y, int which) {
+        switch(which) {
+            case 0:
+                mPaint.setColor(ContextCompat.getColor(getContext(), R.color.score));
+                break;
+            case 1:
+                mPaint.setColor(ContextCompat.getColor(getContext(), R.color.miss));
+                break;
+            case 2:
+                mPaint.setColor(ContextCompat.getColor(getContext(), R.color.assist));
+                break;
+            case 3:
+                mPaint.setColor(ContextCompat.getColor(getContext(), R.color.steal));
+                break;
+            case 4:
+                mPaint.setColor(ContextCompat.getColor(getContext(), R.color.foul));
+                break;
+            default:
+                mPaint.setColor(ContextCompat.getColor(getContext(), R.color.court));
+                break;
+        }
+
+        mCanvas.drawCircle(x, y, DOT_PAINT_RADIUS, mPaint);
+        invalidate();
+        // TODO:  save the coordinates and event type into a file (JSON, SQLlite, or custom format)
+    }
+
+    private void selectEventLabel(final float x, final float y, final EventLabelCallback callback) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Label event")
+                .setItems(R.array.event_labels, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        callback.onEventLabelled(x, y, which);
+                    }
+                })
+                .show();
     }
 
 }

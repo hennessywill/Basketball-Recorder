@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="event_labels">
+        <item>Score</item>
+        <item>Miss</item>
+        <item>Assist</item>
+        <item>Steal</item>
+        <item>Foul</item>
+    </string-array>
+    
+</resources>
