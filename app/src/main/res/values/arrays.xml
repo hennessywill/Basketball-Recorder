@@ -5,8 +5,9 @@
         <item>Score</item>
         <item>Miss</item>
         <item>Assist</item>
+        <item>Rebound</item>
         <item>Steal</item>
         <item>Foul</item>
     </string-array>
-    
+
 </resources>

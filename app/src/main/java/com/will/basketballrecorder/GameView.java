@@ -15,8 +15,7 @@ import android.view.View;
 public class GameView extends View implements View.OnTouchListener, EventLabelCallback {
 
     private Paint mPaint;
-    private Bitmap linesBitmap;
-    private Bitmap eventsBitmap;
+    private Bitmap mBitmap;
     private Canvas mCanvas;
 
     private static int DOT_PAINT_RADIUS = 10;
@@ -49,16 +48,15 @@ public class GameView extends View implements View.OnTouchListener, EventLabelCa
 
     protected void onSizeChanged(int w, int h, int oldW, int oldH) {
         super.onSizeChanged(w, h, oldW, oldH);
-        linesBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
-        eventsBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
-        mCanvas = new Canvas(linesBitmap);
+        mBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        mCanvas = new Canvas(mBitmap);
         mPaint = new Paint();
         initCourtLines();
     }
 
     private void initCourtLines() {
-        int w = linesBitmap.getWidth();
-        int h = linesBitmap.getHeight();
+        int w = mBitmap.getWidth();
+        int h = mBitmap.getHeight();
 
         // calculate scale factor from feet to pixels
         int scale = (int) Math.min(w/(float)COURT_WIDTH, h/(float)COURT_HEIGHT);
@@ -129,8 +127,7 @@ public class GameView extends View implements View.OnTouchListener, EventLabelCa
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        canvas.drawBitmap(linesBitmap, 0, 0, mPaint);
-        canvas.drawBitmap(eventsBitmap, 0, 0, mPaint);
+        canvas.drawBitmap(mBitmap, 0, 0, mPaint);
     }
 
     public boolean onTouch(View v, MotionEvent event) {
@@ -160,9 +157,12 @@ public class GameView extends View implements View.OnTouchListener, EventLabelCa
                 mPaint.setColor(ContextCompat.getColor(getContext(), R.color.assist));
                 break;
             case 3:
-                mPaint.setColor(ContextCompat.getColor(getContext(), R.color.steal));
+                mPaint.setColor(ContextCompat.getColor(getContext(), R.color.rebound));
                 break;
             case 4:
+                mPaint.setColor(ContextCompat.getColor(getContext(), R.color.steal));
+                break;
+            case 5:
                 mPaint.setColor(ContextCompat.getColor(getContext(), R.color.foul));
                 break;
             default:
