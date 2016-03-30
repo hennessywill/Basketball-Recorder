@@ -14,4 +14,98 @@
         android:layout_height="wrap_content"
         android:text="TODO:  create a table/list displaying statistics" />
 
+    <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:stretchColumns="1">
+        <TableRow>
+            <TextView
+                android:layout_column="1"
+                android:text="Home Score"
+                android:padding="3dip" />
+            <TextView
+                android:text="0"
+                android:gravity="right"
+                android:padding="3dip"
+                android:id="@+/home_score"/>
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:layout_column="1"
+                android:text="Away Score"
+                android:padding="3dip" />
+            <TextView
+                android:text="0"
+                android:gravity="right"
+                android:padding="3dip"
+                android:id="@+/away_score"/>
+        </TableRow>
+
+        <View
+            android:layout_height="2dip"
+            android:background="#FF909090" />
+
+        <TableRow>
+            <TextView
+                android:layout_column="1"
+                android:text="Free Throws Made"
+                android:padding="3dip" />
+            <TextView
+                android:text="0"
+                android:gravity="right"
+                android:padding="3dip"
+                android:id="@+/ftm_count"/>
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:layout_column="1"
+                android:text="Field Goals Made"
+                android:padding="3dip" />
+            <TextView
+                android:text="0"
+                android:gravity="right"
+                android:padding="3dip"
+                android:id="@+/fgm_count"/>
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:layout_column="1"
+                android:text="Assists"
+                android:padding="3dip" />
+            <TextView
+                android:text="0"
+                android:gravity="right"
+                android:padding="3dip"
+                android:id="@+/assists"/>
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:layout_column="1"
+                android:text="Blocks"
+                android:padding="3dip" />
+            <TextView
+                android:text="0"
+                android:gravity="right"
+                android:padding="3dip"
+                android:id="@+/blocks"/>
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:layout_column="1"
+                android:text="Fouls"
+                android:padding="3dip" />
+            <TextView
+                android:text="0"
+                android:gravity="right"
+                android:padding="3dip"
+                android:id="@+/fouls"/>
+        </TableRow>
+    </TableLayout>
+
+
 </RelativeLayout>
