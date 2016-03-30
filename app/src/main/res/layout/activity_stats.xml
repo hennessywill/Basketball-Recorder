@@ -44,6 +44,18 @@
         <TableRow>
             <TextView
                 android:layout_column="1"
+                android:text="Points Scored"
+                android:padding="3dip" />
+            <TextView
+                android:text="0"
+                android:gravity="right"
+                android:padding="3dip"
+                android:id="@+id/points_scored"/>
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:layout_column="1"
                 android:text="Free Throws Made"
                 android:padding="3dip" />
             <TextView

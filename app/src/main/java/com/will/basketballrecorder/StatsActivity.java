@@ -2,6 +2,7 @@ package com.will.basketballrecorder;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.widget.TextView;
 
 public class StatsActivity extends Activity {
 
@@ -9,7 +10,7 @@ public class StatsActivity extends Activity {
     private int AWAY_SCORE = 0;
 
     // Stats for player of interest
-    private int POINTS_MADE = 0;
+    private int POINTS_SCORED = 0;
     private int FGM_COUNT = 0; // FGM : Field Goals Made
     private int FGM_ATTEMPTED = 0;
     private double FGM_PERCENT = 0.0;
@@ -32,8 +33,8 @@ public class StatsActivity extends Activity {
         TextView away_score = (TextView) findViewById(R.id.away_score);
         away_score.setText(AWAY_SCORE);
 
-        TextView points_made = (TextView) findViewById(R.id.points_made);
-        points_made.setText(POINTS_MADE);
+        TextView points_made = (TextView) findViewById(R.id.points_scored);
+        points_made.setText(POINTS_SCORED);
 
         TextView fgm_count = (TextView) findViewById(R.id.fgm_count);
         fgm_count.setText(FGM_COUNT);
@@ -51,10 +52,11 @@ public class StatsActivity extends Activity {
         fouls.setText(FOULS);
 
     }
-}
 
-    public StatsActivity(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        setOnTouchListener(this);
-        // to later implement option to increment or decrement scores
-    }
+//    public StatsActivity(Context context, AttributeSet attrs) {
+//        super(context, attrs);
+//        setOnTouchListener(this);
+//        // to later implement option to increment or decrement scores
+//    }
+
+}
