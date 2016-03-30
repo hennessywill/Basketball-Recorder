@@ -1,9 +1,9 @@
 package com.will.basketballrecorder;
 
-import android.support.v7.app.AppCompatActivity;
+import android.app.Activity;
 import android.os.Bundle;
 
-public class GameActivity extends AppCompatActivity {
+public class GameActivity extends Activity {
 
     // Actions:  shot, miss, penalty, assist,
 
