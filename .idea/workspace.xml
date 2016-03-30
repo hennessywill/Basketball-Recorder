@@ -18,13 +18,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="293729e2-9386-4407-9060-7ce5ca9b5b51" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/java/com/will/basketballrecorder/GameView.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/will/basketballrecorder/GameActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/will/basketballrecorder/GameActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/will/basketballrecorder/HistoryActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/will/basketballrecorder/HistoryActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/will/basketballrecorder/StatsActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/will/basketballrecorder/StatsActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_game.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_game.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/values/colors.xml" afterPath="$PROJECT_DIR$/app/src/main/res/values/colors.xml" />
     </list>
     <ignored path="BasketballRecorder.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -2078,7 +2072,13 @@
       <option name="project" value="LOCAL" />
       <updated>1459294266599</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Initialize game court canvas">
+      <created>1459299445822</created>
+      <option name="number" value="00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1459299445822</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -2121,7 +2121,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Initial Commit" />
     <MESSAGE value="Lock game activity orientation" />
-    <option name="LAST_COMMIT_MESSAGE" value="Lock game activity orientation" />
+    <MESSAGE value="Initialize game court canvas" />
+    <option name="LAST_COMMIT_MESSAGE" value="Initialize game court canvas" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
