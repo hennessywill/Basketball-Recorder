@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -15,24 +16,71 @@ public class GameView extends View implements View.OnTouchListener {
     private Bitmap eventsBitmap;
     private Canvas mCanvas;
 
+    private static int DOT_PAINT_RADIUS = 10;
+    private static int LINE_PAINT_WIDTH = 6;
+
+    // NBA basketball court dimensions in feet
+    // source:  http://i1.wp.com/www.sportscourtdimensions.com/wp-content/uploads/2015/02/nba_court_dimensions_h.png
+    private static int COURT_WIDTH = 94;
+    private static int COURT_HEIGHT = 50;
+    private static int HALF_COURT_RADIUS = 6;
+
     public GameView(Context context) {
         super(context);
-        init();
+        setOnTouchListener(this);
     }
 
     public GameView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init();
+        setOnTouchListener(this);
     }
 
     public GameView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        init();
+        setOnTouchListener(this);
     }
 
-    public void init() {
+    protected void onSizeChanged(int w, int h, int oldW, int oldH) {
+        super.onSizeChanged(w, h, oldW, oldH);
+        linesBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        eventsBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        mCanvas = new Canvas(linesBitmap);
         mPaint = new Paint();
-        setOnTouchListener(this);
+        initCourtLines();
+    }
+
+    private void initCourtLines() {
+        int w = linesBitmap.getWidth();
+        int h = linesBitmap.getHeight();
+
+        // calculate scale factor from feet to pixels
+        int scale = (int) Math.min(w/(float)COURT_WIDTH, h/(float)COURT_HEIGHT);
+
+        Paint linePaint = new Paint();
+        linePaint.setColor(ContextCompat.getColor(getContext(), R.color.lines));
+        linePaint.setStrokeWidth(LINE_PAINT_WIDTH);
+        linePaint.setStyle(Paint.Style.STROKE);
+        linePaint.setAntiAlias(true);
+
+
+        int courtPixelWidth = scale*COURT_WIDTH;
+        int courtPixelHeight = scale*COURT_HEIGHT;
+
+        // translate the court from (0,0) to (originX, originY) so it is centered on screen
+        int originX = (w - courtPixelWidth) / 2;
+        int originY = (h - courtPixelHeight) / 2;
+
+        // horizontal sidelines
+        mCanvas.drawLine(originX, originY, originX+courtPixelWidth, originY, linePaint);
+        mCanvas.drawLine(originX, originY+courtPixelHeight, originX+courtPixelWidth, originY+courtPixelHeight, linePaint);
+
+        // vertical baselines
+        mCanvas.drawLine(originX, originY, originX, originY+courtPixelHeight, linePaint);
+        mCanvas.drawLine(originX+courtPixelWidth, originY, originX+courtPixelWidth, originY+courtPixelHeight, linePaint);
+
+        // half-court line
+        mCanvas.drawLine(originX+courtPixelWidth/2, originY, originX+courtPixelWidth/2, originY+courtPixelHeight, linePaint);
+        mCanvas.drawCircle(originX+courtPixelWidth/2, originY+courtPixelHeight/2, scale*HALF_COURT_RADIUS, linePaint);
     }
 
     @Override
@@ -42,24 +90,19 @@ public class GameView extends View implements View.OnTouchListener {
         canvas.drawBitmap(eventsBitmap, 0, 0, mPaint);
     }
 
-    protected void onSizeChanged(int w, int h, int oldW, int oldH) {
-        super.onSizeChanged(w, h, oldW, oldH);
-        linesBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
-        eventsBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
-        mCanvas = new Canvas();
-    }
-
     public boolean onTouch(View v, MotionEvent event) {
         int action = event.getActionMasked();
         float x = event.getX();
         float y = event.getY();
 
         switch(action) {
-            case MotionEvent.ACTION_DOWN:
-                break;
-            case MotionEvent.ACTION_MOVE:
-                break;
             case MotionEvent.ACTION_UP:
+                // TODO:  launch event label fragment
+                // TODO:  get fragment return type and switch-case to set the appropriate color
+                mPaint.setColor(ContextCompat.getColor(getContext(), R.color.score));
+                mCanvas.drawCircle(x, y, DOT_PAINT_RADIUS, mPaint);
+                invalidate();
+                // TODO:  save the coordinates and event type into a file (JSON, SQLlite, or custom format)
                 break;
             default:
                 break;
