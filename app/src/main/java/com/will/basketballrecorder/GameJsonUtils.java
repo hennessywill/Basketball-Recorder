@@ -11,6 +11,8 @@ import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -189,6 +191,9 @@ public class GameJsonUtils {
         }
     }
 
+    /*
+     *  Read the JSON file get game names
+     */
     public static ArrayList<String> getGameNames(Context context, String fileName) {
         ArrayList<String> gameNames = new ArrayList<String>();
         try {
@@ -218,4 +223,56 @@ public class GameJsonUtils {
         return gameNames;
     }
 
+    /*
+     *  Read the JSON file to get game stats
+     */
+    public static Map<String, Integer> getGameStats(Context context, String gameName, String fileName) {
+        Map<String, Integer> gameStats = new HashMap<String, Integer>();
+        try {
+            // Check if file exists to read GameEvents
+            File file = context.getFileStreamPath(fileName);
+            if (!file.exists())
+                return gameStats;
+            FileInputStream fis = context.openFileInput(fileName);
+            InputStreamReader isr = new InputStreamReader(fis, "UTF-8");
+            JsonReader jsonReader = new JsonReader(isr);
+            jsonReader.beginArray();
+            // Each game in json
+            while (jsonReader.hasNext()) {
+                jsonReader.beginObject();
+                jsonReader.nextName();
+                String name = jsonReader.nextString();
+                // Game currently being displayed
+                if (Objects.equals(name, gameName)) {
+                    jsonReader.skipValue();
+                    jsonReader.beginArray();
+                    // Each event in a game
+                    while (jsonReader.hasNext()) {
+                        jsonReader.beginObject();
+                        jsonReader.nextName();
+                        String action = jsonReader.nextString();
+                        if (gameStats.containsKey(action))
+                            gameStats.put(action, gameStats.get(action) + 1);
+                        else
+                            gameStats.put(action, 1);
+                        jsonReader.skipValue();
+                        jsonReader.skipValue();
+                        jsonReader.skipValue();
+                        jsonReader.skipValue();
+                        jsonReader.endObject();
+                    }
+                    jsonReader.endArray();
+                } else {
+                    jsonReader.skipValue();
+                    jsonReader.skipValue();
+                }
+                jsonReader.endObject();
+            }
+            jsonReader.endArray();
+            jsonReader.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return gameStats;
+    }
 }
