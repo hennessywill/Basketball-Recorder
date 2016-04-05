@@ -11,6 +11,17 @@ import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
+
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.util.Objects;
 
 public class GameView extends View implements View.OnTouchListener, EventLabelCallback {
 
@@ -30,6 +41,9 @@ public class GameView extends View implements View.OnTouchListener, EventLabelCa
     private static int LANE_WIDTH = 19;
     private static int LANE_HEIGHT = 12;
     private static int FREETHROW_RADIUS = 6;
+
+    private final String GAME_NAME = "bobs game";
+    private final String FILE_NAME = "data.json";
 
     public GameView(Context context) {
         super(context);
@@ -52,6 +66,163 @@ public class GameView extends View implements View.OnTouchListener, EventLabelCa
         mCanvas = new Canvas(mBitmap);
         mPaint = new Paint();
         initCourtLines();
+        initActions();
+    }
+
+    private void initActions() {
+        try {
+            File file = getContext().getFileStreamPath(FILE_NAME);
+            if (!file.exists())
+                return;
+            FileInputStream fis = getContext().openFileInput(FILE_NAME);
+            InputStreamReader isr = new InputStreamReader(fis, "UTF-8");
+            JsonReader jsonReader = new JsonReader(isr);
+            jsonReader.beginArray();
+            while (jsonReader.hasNext()) {
+                jsonReader.beginObject();
+                jsonReader.nextName();
+                String name = jsonReader.nextString();
+                System.out.println(name);
+                if (Objects.equals(name, GAME_NAME)) {
+                    jsonReader.nextName();
+                    jsonReader.beginArray();
+                    while (jsonReader.hasNext()) {
+                        jsonReader.beginObject();
+                        jsonReader.nextName();
+                        String action = jsonReader.nextString();
+                        switch(action) {
+                            case "score":
+                                mPaint.setColor(ContextCompat.getColor(getContext(), R.color.score));
+                                break;
+                            case "miss":
+                                mPaint.setColor(ContextCompat.getColor(getContext(), R.color.miss));
+                                break;
+                            case "assist":
+                                mPaint.setColor(ContextCompat.getColor(getContext(), R.color.assist));
+                                break;
+                            case "rebound":
+                                mPaint.setColor(ContextCompat.getColor(getContext(), R.color.rebound));
+                                break;
+                            case "steal":
+                                mPaint.setColor(ContextCompat.getColor(getContext(), R.color.steal));
+                                break;
+                            case "foul":
+                                mPaint.setColor(ContextCompat.getColor(getContext(), R.color.foul));
+                                break;
+                            default:
+                                mPaint.setColor(ContextCompat.getColor(getContext(), R.color.court));
+                                break;
+                        }
+                        jsonReader.nextName();
+                        float x = (float) jsonReader.nextDouble();
+                        jsonReader.nextName();
+                        float y = (float) jsonReader.nextDouble();
+                        jsonReader.endObject();
+                        mCanvas.drawCircle(x, y, DOT_PAINT_RADIUS, mPaint);
+                    }
+                } else {
+                    jsonReader.skipValue();
+                    jsonReader.skipValue();
+                }
+                jsonReader.endObject();
+            }
+            jsonReader.endArray();
+            jsonReader.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void saveAction(String action, float x, float y) {
+        if (action == null)
+            return;
+//        String string = "Hello world!";
+//        FileOutputStream outputStream;
+        try {
+//            FileOutputStream fOut = getContext().openFileOutput(FILE_NAME, Context.MODE_WORLD_READABLE);
+//            fOut.write(string.getBytes());
+//            fOut.close();
+//            Toast.makeText(getContext(), "file saved", Toast.LENGTH_SHORT).show();
+            File file = getContext().getFileStreamPath(FILE_NAME);
+            if (!file.exists()) {
+                FileOutputStream fos = getContext().openFileOutput(FILE_NAME, Context.MODE_WORLD_READABLE);
+                OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF-8");
+                JsonWriter jsonWriter = new JsonWriter(osw);
+                jsonWriter.beginArray();
+                jsonWriter.beginObject();
+                jsonWriter.name("name").value(GAME_NAME);
+                jsonWriter.name("events");
+                jsonWriter.beginArray();
+                jsonWriter.beginObject();
+                jsonWriter.name("action").value(action);
+                jsonWriter.name("x").value(x);
+                jsonWriter.name("y").value(y);
+                jsonWriter.endObject();
+                jsonWriter.endArray();
+                jsonWriter.endObject();
+                jsonWriter.endArray();
+                jsonWriter.close();
+                Toast.makeText(getContext(), "Action Saved!", Toast.LENGTH_SHORT).show();
+                return;
+
+            }
+            FileOutputStream fos = getContext().openFileOutput("tmp_" + FILE_NAME, Context.MODE_WORLD_READABLE);
+            OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF-8");
+            JsonWriter jsonWriter = new JsonWriter(osw);
+            FileInputStream fis = getContext().openFileInput(FILE_NAME);
+            InputStreamReader isr = new InputStreamReader(fis, "UTF-8");
+            JsonReader jsonReader = new JsonReader(isr);
+            jsonReader.beginArray();
+            jsonWriter.beginArray();
+            while (jsonReader.hasNext()) {
+                jsonReader.beginObject();
+                jsonWriter.beginObject();
+                String name = jsonReader.nextName();
+                String game_value = jsonReader.nextString();
+                jsonWriter.name(name).value(game_value);
+                name = jsonReader.nextName();
+                jsonWriter.name(name);
+                jsonReader.beginArray();
+                jsonWriter.beginArray();
+                String value;
+                while (jsonReader.hasNext()) {
+                    jsonReader.beginObject();
+                    jsonWriter.beginObject();
+                    name = jsonReader.nextName();
+                    value = jsonReader.nextString();
+                    jsonWriter.name(name).value(value);
+                    name = jsonReader.nextName();
+                    Double dbl_value = jsonReader.nextDouble();
+                    jsonWriter.name(name).value(dbl_value);
+                    name = jsonReader.nextName();
+                    dbl_value = jsonReader.nextDouble();
+                    jsonWriter.name(name).value(dbl_value);
+                    jsonReader.endObject();
+                    jsonWriter.endObject();
+                }
+                if (Objects.equals(game_value, GAME_NAME)) {
+                    jsonWriter.beginObject();
+                    jsonWriter.name("action").value(action);
+                    jsonWriter.name("x").value(x);
+                    jsonWriter.name("y").value(y);
+                    jsonWriter.endObject();
+                }
+                jsonReader.endArray();
+                jsonWriter.endArray();
+                jsonReader.endObject();
+                jsonWriter.endObject();
+            }
+            jsonReader.endArray();
+            jsonWriter.endArray();
+            jsonReader.close();
+            jsonWriter.close();
+            File oldfile = getContext().getFileStreamPath(FILE_NAME);
+            File newfile = getContext().getFileStreamPath("tmp_" + FILE_NAME);
+            newfile.renameTo(oldfile);
+            Toast.makeText(getContext(), "Action Saved!", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void initCourtLines() {
@@ -146,23 +317,30 @@ public class GameView extends View implements View.OnTouchListener, EventLabelCa
     }
 
     public void onEventLabelled(float x, float y, int which) {
+        String action = null;
         switch(which) {
             case 0:
+                action = "score";
                 mPaint.setColor(ContextCompat.getColor(getContext(), R.color.score));
                 break;
             case 1:
+                action = "miss";
                 mPaint.setColor(ContextCompat.getColor(getContext(), R.color.miss));
                 break;
             case 2:
+                action = "assist";
                 mPaint.setColor(ContextCompat.getColor(getContext(), R.color.assist));
                 break;
             case 3:
+                action = "rebound";
                 mPaint.setColor(ContextCompat.getColor(getContext(), R.color.rebound));
                 break;
             case 4:
+                action = "steal";
                 mPaint.setColor(ContextCompat.getColor(getContext(), R.color.steal));
                 break;
             case 5:
+                action = "foul";
                 mPaint.setColor(ContextCompat.getColor(getContext(), R.color.foul));
                 break;
             default:
@@ -172,6 +350,7 @@ public class GameView extends View implements View.OnTouchListener, EventLabelCa
 
         mCanvas.drawCircle(x, y, DOT_PAINT_RADIUS, mPaint);
         invalidate();
+        saveAction(action, x, y);
         // TODO:  save the coordinates and event type into a file (JSON, SQLlite, or custom format)
     }
 
