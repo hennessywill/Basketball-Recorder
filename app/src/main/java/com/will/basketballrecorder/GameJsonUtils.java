@@ -24,6 +24,7 @@ public class GameJsonUtils {
     public static ArrayList<GameEvent> initGameEvents(Context context, String gameName, String fileName) {
         ArrayList<GameEvent> result = new ArrayList<GameEvent>();
         try {
+            // Check if file exists to read GameEvents
             File file = context.getFileStreamPath(fileName);
             if (!file.exists())
                 return result;
@@ -31,14 +32,16 @@ public class GameJsonUtils {
             InputStreamReader isr = new InputStreamReader(fis, "UTF-8");
             JsonReader jsonReader = new JsonReader(isr);
             jsonReader.beginArray();
+            // Each game in json
             while (jsonReader.hasNext()) {
                 jsonReader.beginObject();
                 jsonReader.nextName();
                 String name = jsonReader.nextString();
-                System.out.println(name);
+                // Game currently being displayed
                 if (Objects.equals(name, gameName)) {
                     jsonReader.nextName();
                     jsonReader.beginArray();
+                    // Each event in a game
                     while (jsonReader.hasNext()) {
                         jsonReader.beginObject();
                         jsonReader.nextName();
@@ -73,29 +76,22 @@ public class GameJsonUtils {
         if (event.getAction() == null)
             return;
         try {
+            // Check if file exists to write to, if not then create
             File file = context.getFileStreamPath(fileName);
             if (!file.exists()) {
                 FileOutputStream fos = context.openFileOutput(fileName, Context.MODE_WORLD_READABLE);
                 OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF-8");
                 JsonWriter jsonWriter = new JsonWriter(osw);
                 jsonWriter.beginArray();
-                jsonWriter.beginObject();
-                jsonWriter.name("name").value(gameName);
-                jsonWriter.name("events");
-                jsonWriter.beginArray();
-                jsonWriter.beginObject();
-                jsonWriter.name("action").value(event.getAction());
-                jsonWriter.name("x").value(event.getX());
-                jsonWriter.name("y").value(event.getY());
-                jsonWriter.endObject();
-                jsonWriter.endArray();
-                jsonWriter.endObject();
+                writeGame(gameName, event, jsonWriter);
                 jsonWriter.endArray();
                 jsonWriter.close();
                 //Toast.makeText(context, "Action Saved!", Toast.LENGTH_SHORT).show();
                 return;
 
             }
+            boolean eventAdded = false;
+            // Create temp file to write to while reading permenant file
             FileOutputStream fos = context.openFileOutput("tmp_" + fileName, Context.MODE_WORLD_READABLE);
             OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF-8");
             JsonWriter jsonWriter = new JsonWriter(osw);
@@ -104,6 +100,7 @@ public class GameJsonUtils {
             JsonReader jsonReader = new JsonReader(isr);
             jsonReader.beginArray();
             jsonWriter.beginArray();
+            // Each game in json
             while (jsonReader.hasNext()) {
                 jsonReader.beginObject();
                 jsonWriter.beginObject();
@@ -115,6 +112,7 @@ public class GameJsonUtils {
                 jsonReader.beginArray();
                 jsonWriter.beginArray();
                 String value;
+                // Each event in a game
                 while (jsonReader.hasNext()) {
                     jsonReader.beginObject();
                     jsonWriter.beginObject();
@@ -122,34 +120,69 @@ public class GameJsonUtils {
                     value = jsonReader.nextString();
                     jsonWriter.name(name).value(value);
                     name = jsonReader.nextName();
-                    Double dbl_value = jsonReader.nextDouble();
+                    Float dbl_value = (float) jsonReader.nextDouble();
                     jsonWriter.name(name).value(dbl_value);
                     name = jsonReader.nextName();
-                    dbl_value = jsonReader.nextDouble();
+                    dbl_value = (float) jsonReader.nextDouble();
                     jsonWriter.name(name).value(dbl_value);
                     jsonReader.endObject();
                     jsonWriter.endObject();
                 }
+                // Add event to end of array
                 if (Objects.equals(game_value, gameName)) {
-                    jsonWriter.beginObject();
-                    jsonWriter.name("action").value(event.getAction());
-                    jsonWriter.name("x").value(event.getX());
-                    jsonWriter.name("y").value(event.getY());
-                    jsonWriter.endObject();
+                    writeEvent(event, jsonWriter);
+                    eventAdded = true;
                 }
                 jsonReader.endArray();
                 jsonWriter.endArray();
                 jsonReader.endObject();
                 jsonWriter.endObject();
             }
+            // New game
+            if (!eventAdded) {
+                writeGame(gameName, event, jsonWriter);
+            }
             jsonReader.endArray();
             jsonWriter.endArray();
             jsonReader.close();
             jsonWriter.close();
+            // Change temp file to permenant file
             File oldfile = context.getFileStreamPath(fileName);
             File newfile = context.getFileStreamPath("tmp_" + fileName);
             newfile.renameTo(oldfile);
             //Toast.makeText(context, "Action Saved!", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /*
+     *  Helper: Write a new game into JSON
+     */
+    private static void writeGame(String gameName, GameEvent event, JsonWriter jsonWriter) {
+        try {
+            jsonWriter.beginObject();
+            jsonWriter.name("name").value(gameName);
+            jsonWriter.name("events");
+            jsonWriter.beginArray();
+            writeEvent(event, jsonWriter);
+            jsonWriter.endArray();
+            jsonWriter.endObject();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /*
+     *  Helper: Write a new event into the JSON file
+     */
+    private static void writeEvent(GameEvent event, JsonWriter jsonWriter) {
+        try {
+            jsonWriter.beginObject();
+            jsonWriter.name("action").value(event.getAction());
+            jsonWriter.name("x").value(event.getX());
+            jsonWriter.name("y").value(event.getY());
+            jsonWriter.endObject();
         } catch (Exception e) {
             e.printStackTrace();
         }
