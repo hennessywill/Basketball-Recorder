@@ -54,6 +54,7 @@ public class GameJsonUtils {
                         GameEvent event = new GameEvent(action, x, y);
                         result.add(event);
                     }
+                    jsonReader.endArray();
                 } else {
                     jsonReader.skipValue();
                     jsonReader.skipValue();
@@ -186,6 +187,35 @@ public class GameJsonUtils {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static ArrayList<String> getGameNames(Context context, String fileName) {
+        ArrayList<String> gameNames = new ArrayList<String>();
+        try {
+            // Check if file exists to read GameEvents
+            File file = context.getFileStreamPath(fileName);
+            if (!file.exists())
+                return gameNames;
+            FileInputStream fis = context.openFileInput(fileName);
+            InputStreamReader isr = new InputStreamReader(fis, "UTF-8");
+            JsonReader jsonReader = new JsonReader(isr);
+            jsonReader.beginArray();
+            // Each game in json
+            while (jsonReader.hasNext()) {
+                jsonReader.beginObject();
+                jsonReader.skipValue();
+                String name = jsonReader.nextString();
+                gameNames.add(name);
+                jsonReader.skipValue();
+                jsonReader.skipValue();
+                jsonReader.endObject();
+            }
+            jsonReader.endArray();
+            jsonReader.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return gameNames;
     }
 
 }

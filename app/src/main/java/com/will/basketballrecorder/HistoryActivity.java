@@ -9,7 +9,11 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import java.util.ArrayList;
+
 public class HistoryActivity extends Activity {
+
+    private String FILE_NAME = "data.json";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,10 +29,10 @@ public class HistoryActivity extends Activity {
             }
         });
 
-        String[] fileNames = readGameNames();
+        ArrayList<String> gameNames = GameJsonUtils.getGameNames(getBaseContext(), FILE_NAME);
         ListView listView = (ListView) findViewById(R.id.files_list);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1, android.R.id.text1, fileNames);
+                android.R.layout.simple_list_item_1, android.R.id.text1, gameNames);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -36,16 +40,9 @@ public class HistoryActivity extends Activity {
                 String gameName = (String) parent.getAdapter().getItem(position);
                 Intent i = new Intent(view.getContext(), GameActivity.class);
                 i.putExtra("game_name", gameName);
+                i.putExtra("file_name", FILE_NAME);
                 startActivity(i);
             }
         });
     }
-
-    // Read the saved text file and return a list of all stored game names
-    private String[] readGameNames() {
-        // TODO - read the games from the JSON into a String array
-        String[] res = {"game1", "game2", "game3", "game4"};
-        return res;
-    }
-
 }

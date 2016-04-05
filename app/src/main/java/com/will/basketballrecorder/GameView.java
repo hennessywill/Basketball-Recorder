@@ -35,24 +35,27 @@ public class GameView extends View implements View.OnTouchListener, EventLabelCa
     private static int FREETHROW_RADIUS = 6;
 
     private String gameName;
-    private String FILE_NAME = "data.json";
+    private String fileName;
 
     public GameView(Context context) {
         super(context);
         setOnTouchListener(this);
         gameName = ((GameActivity) getContext()).getGameName();
+        fileName = ((GameActivity) getContext()).getFileName();
     }
 
     public GameView(Context context, AttributeSet attrs) {
         super(context, attrs);
         setOnTouchListener(this);
         gameName = ((GameActivity) getContext()).getGameName();
+        fileName = ((GameActivity) getContext()).getFileName();
     }
 
     public GameView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         setOnTouchListener(this);
         gameName = ((GameActivity) getContext()).getGameName();
+        fileName = ((GameActivity) getContext()).getFileName();
     }
 
     protected void onSizeChanged(int w, int h, int oldW, int oldH) {
@@ -139,7 +142,7 @@ public class GameView extends View implements View.OnTouchListener, EventLabelCa
      */
     private void initHistoricalGameEvents() {
         Log.e("NAME", gameName);
-        ArrayList<GameEvent> eventList = GameJsonUtils.initGameEvents(getContext(), gameName, FILE_NAME);
+        ArrayList<GameEvent> eventList = GameJsonUtils.initGameEvents(getContext(), gameName, fileName);
         for (GameEvent event : eventList) {
             switch(event.getAction()) {
                 case "score":
@@ -225,7 +228,7 @@ public class GameView extends View implements View.OnTouchListener, EventLabelCa
         mCanvas.drawCircle(x, y, DOT_PAINT_RADIUS, mPaint);
         invalidate();
         GameEvent event = new GameEvent(action, x, y);
-        GameJsonUtils.saveGameEvent(getContext(), gameName, FILE_NAME, event);
+        GameJsonUtils.saveGameEvent(getContext(), gameName, fileName, event);
     }
 
     private void selectEventLabel(final float x, final float y, final EventLabelCallback callback) {
