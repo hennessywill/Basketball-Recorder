@@ -11,7 +11,6 @@ import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Toast;
 
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
@@ -29,10 +28,11 @@ public class GameView extends View implements View.OnTouchListener, EventLabelCa
     private Bitmap mBitmap;
     private Canvas mCanvas;
 
+
     private static int DOT_PAINT_RADIUS = 12;
-    private static int LINE_PAINT_WIDTH = 8;
 
     // Youth basketball court dimensions in feet
+    private static int LINE_PAINT_WIDTH = 8;
     private static int COURT_WIDTH = 94;
     private static int COURT_HEIGHT = 50;
     private static int HALF_COURT_RADIUS = 6;
@@ -136,13 +136,7 @@ public class GameView extends View implements View.OnTouchListener, EventLabelCa
     private void saveAction(String action, float x, float y) {
         if (action == null)
             return;
-//        String string = "Hello world!";
-//        FileOutputStream outputStream;
         try {
-//            FileOutputStream fOut = getContext().openFileOutput(FILE_NAME, Context.MODE_WORLD_READABLE);
-//            fOut.write(string.getBytes());
-//            fOut.close();
-//            Toast.makeText(getContext(), "file saved", Toast.LENGTH_SHORT).show();
             File file = getContext().getFileStreamPath(FILE_NAME);
             if (!file.exists()) {
                 FileOutputStream fos = getContext().openFileOutput(FILE_NAME, Context.MODE_WORLD_READABLE);
@@ -162,7 +156,7 @@ public class GameView extends View implements View.OnTouchListener, EventLabelCa
                 jsonWriter.endObject();
                 jsonWriter.endArray();
                 jsonWriter.close();
-                Toast.makeText(getContext(), "Action Saved!", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getContext(), "Action Saved!", Toast.LENGTH_SHORT).show();
                 return;
 
             }
@@ -219,7 +213,7 @@ public class GameView extends View implements View.OnTouchListener, EventLabelCa
             File oldfile = getContext().getFileStreamPath(FILE_NAME);
             File newfile = getContext().getFileStreamPath("tmp_" + FILE_NAME);
             newfile.renameTo(oldfile);
-            Toast.makeText(getContext(), "Action Saved!", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getContext(), "Action Saved!", Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             e.printStackTrace();
         }
