@@ -9,25 +9,17 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.util.Objects;
+import java.util.ArrayList;
 
 public class GameView extends View implements View.OnTouchListener, EventLabelCallback {
 
     private Paint mPaint;
     private Bitmap mBitmap;
     private Canvas mCanvas;
-
 
     private static int DOT_PAINT_RADIUS = 12;
 
@@ -69,157 +61,7 @@ public class GameView extends View implements View.OnTouchListener, EventLabelCa
         mCanvas = new Canvas(mBitmap);
         mPaint = new Paint();
         initCourtLines();
-        initActions();
-    }
-
-    private void initActions() {
-        try {
-            File file = getContext().getFileStreamPath(FILE_NAME);
-            if (!file.exists())
-                return;
-            FileInputStream fis = getContext().openFileInput(FILE_NAME);
-            InputStreamReader isr = new InputStreamReader(fis, "UTF-8");
-            JsonReader jsonReader = new JsonReader(isr);
-            jsonReader.beginArray();
-            while (jsonReader.hasNext()) {
-                jsonReader.beginObject();
-                jsonReader.nextName();
-                String name = jsonReader.nextString();
-                System.out.println(name);
-                if (Objects.equals(name, gameName)) {
-                    jsonReader.nextName();
-                    jsonReader.beginArray();
-                    while (jsonReader.hasNext()) {
-                        jsonReader.beginObject();
-                        jsonReader.nextName();
-                        String action = jsonReader.nextString();
-                        switch(action) {
-                            case "score":
-                                mPaint.setColor(ContextCompat.getColor(getContext(), R.color.score));
-                                break;
-                            case "miss":
-                                mPaint.setColor(ContextCompat.getColor(getContext(), R.color.miss));
-                                break;
-                            case "assist":
-                                mPaint.setColor(ContextCompat.getColor(getContext(), R.color.assist));
-                                break;
-                            case "rebound":
-                                mPaint.setColor(ContextCompat.getColor(getContext(), R.color.rebound));
-                                break;
-                            case "steal":
-                                mPaint.setColor(ContextCompat.getColor(getContext(), R.color.steal));
-                                break;
-                            case "foul":
-                                mPaint.setColor(ContextCompat.getColor(getContext(), R.color.foul));
-                                break;
-                            default:
-                                mPaint.setColor(ContextCompat.getColor(getContext(), R.color.court));
-                                break;
-                        }
-                        jsonReader.nextName();
-                        float x = (float) jsonReader.nextDouble();
-                        jsonReader.nextName();
-                        float y = (float) jsonReader.nextDouble();
-                        jsonReader.endObject();
-                        mCanvas.drawCircle(x, y, DOT_PAINT_RADIUS, mPaint);
-                    }
-                } else {
-                    jsonReader.skipValue();
-                    jsonReader.skipValue();
-                }
-                jsonReader.endObject();
-            }
-            jsonReader.endArray();
-            jsonReader.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void saveAction(String action, float x, float y) {
-        if (action == null)
-            return;
-        try {
-            File file = getContext().getFileStreamPath(FILE_NAME);
-            if (!file.exists()) {
-                FileOutputStream fos = getContext().openFileOutput(FILE_NAME, Context.MODE_WORLD_READABLE);
-                OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF-8");
-                JsonWriter jsonWriter = new JsonWriter(osw);
-                jsonWriter.beginArray();
-                jsonWriter.beginObject();
-                jsonWriter.name("name").value(gameName);
-                jsonWriter.name("events");
-                jsonWriter.beginArray();
-                jsonWriter.beginObject();
-                jsonWriter.name("action").value(action);
-                jsonWriter.name("x").value(x);
-                jsonWriter.name("y").value(y);
-                jsonWriter.endObject();
-                jsonWriter.endArray();
-                jsonWriter.endObject();
-                jsonWriter.endArray();
-                jsonWriter.close();
-                //Toast.makeText(getContext(), "Action Saved!", Toast.LENGTH_SHORT).show();
-                return;
-
-            }
-            FileOutputStream fos = getContext().openFileOutput("tmp_" + FILE_NAME, Context.MODE_WORLD_READABLE);
-            OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF-8");
-            JsonWriter jsonWriter = new JsonWriter(osw);
-            FileInputStream fis = getContext().openFileInput(FILE_NAME);
-            InputStreamReader isr = new InputStreamReader(fis, "UTF-8");
-            JsonReader jsonReader = new JsonReader(isr);
-            jsonReader.beginArray();
-            jsonWriter.beginArray();
-            while (jsonReader.hasNext()) {
-                jsonReader.beginObject();
-                jsonWriter.beginObject();
-                String name = jsonReader.nextName();
-                String game_value = jsonReader.nextString();
-                jsonWriter.name(name).value(game_value);
-                name = jsonReader.nextName();
-                jsonWriter.name(name);
-                jsonReader.beginArray();
-                jsonWriter.beginArray();
-                String value;
-                while (jsonReader.hasNext()) {
-                    jsonReader.beginObject();
-                    jsonWriter.beginObject();
-                    name = jsonReader.nextName();
-                    value = jsonReader.nextString();
-                    jsonWriter.name(name).value(value);
-                    name = jsonReader.nextName();
-                    Double dbl_value = jsonReader.nextDouble();
-                    jsonWriter.name(name).value(dbl_value);
-                    name = jsonReader.nextName();
-                    dbl_value = jsonReader.nextDouble();
-                    jsonWriter.name(name).value(dbl_value);
-                    jsonReader.endObject();
-                    jsonWriter.endObject();
-                }
-                if (Objects.equals(game_value, gameName)) {
-                    jsonWriter.beginObject();
-                    jsonWriter.name("action").value(action);
-                    jsonWriter.name("x").value(x);
-                    jsonWriter.name("y").value(y);
-                    jsonWriter.endObject();
-                }
-                jsonReader.endArray();
-                jsonWriter.endArray();
-                jsonReader.endObject();
-                jsonWriter.endObject();
-            }
-            jsonReader.endArray();
-            jsonWriter.endArray();
-            jsonReader.close();
-            jsonWriter.close();
-            File oldfile = getContext().getFileStreamPath(FILE_NAME);
-            File newfile = getContext().getFileStreamPath("tmp_" + FILE_NAME);
-            newfile.renameTo(oldfile);
-            //Toast.makeText(getContext(), "Action Saved!", Toast.LENGTH_SHORT).show();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        initHistoricalGameEvents();
     }
 
     private void initCourtLines() {
@@ -292,6 +134,41 @@ public class GameView extends View implements View.OnTouchListener, EventLabelCa
                 originY+courtPixelHeight-sidelineToThreePointLine, linePaint);
     }
 
+    /*
+     *  Read in the JSON file and populate the screen with past game events
+     */
+    private void initHistoricalGameEvents() {
+        Log.e("NAME", gameName);
+        ArrayList<GameEvent> eventList = GameJsonUtils.initGameEvents(getContext(), gameName, FILE_NAME);
+        for (GameEvent event : eventList) {
+            switch(event.getAction()) {
+                case "score":
+                    mPaint.setColor(ContextCompat.getColor(getContext(), R.color.score));
+                    break;
+                case "miss":
+                    mPaint.setColor(ContextCompat.getColor(getContext(), R.color.miss));
+                    break;
+                case "assist":
+                    mPaint.setColor(ContextCompat.getColor(getContext(), R.color.assist));
+                    break;
+                case "rebound":
+                    mPaint.setColor(ContextCompat.getColor(getContext(), R.color.rebound));
+                    break;
+                case "steal":
+                    mPaint.setColor(ContextCompat.getColor(getContext(), R.color.steal));
+                    break;
+                case "foul":
+                    mPaint.setColor(ContextCompat.getColor(getContext(), R.color.foul));
+                    break;
+                default:
+                    mPaint.setColor(ContextCompat.getColor(getContext(), R.color.court));
+                    break;
+            }
+            mCanvas.drawCircle(event.getX(), event.getY(), DOT_PAINT_RADIUS, mPaint);
+        }
+        invalidate();
+    }
+
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
@@ -347,22 +224,19 @@ public class GameView extends View implements View.OnTouchListener, EventLabelCa
 
         mCanvas.drawCircle(x, y, DOT_PAINT_RADIUS, mPaint);
         invalidate();
-        saveAction(action, x, y);
+        GameEvent event = new GameEvent(action, x, y);
+        GameJsonUtils.saveGameEvent(getContext(), gameName, FILE_NAME, event);
     }
 
     private void selectEventLabel(final float x, final float y, final EventLabelCallback callback) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-//        int selected = 0;
         builder.setTitle("Label event");
-        // or whatever you want
-      builder.setSingleChoiceItems(R.array.event_labels, -1, new DialogInterface.OnClickListener() {
-          //                .setItems(R.array.event_labels, new DialogInterface.OnClickListener() {
-          public void onClick(DialogInterface dialog, int which) {
-              dialog.dismiss();
-              callback.onEventLabelled(x, y, which);
-          }
-      })
-                .show();
+        builder.setSingleChoiceItems(R.array.event_labels, -1, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                callback.onEventLabelled(x, y, which);
+            }
+        }).show();
     }
 
 }
