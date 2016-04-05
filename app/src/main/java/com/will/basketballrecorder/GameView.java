@@ -29,8 +29,8 @@ public class GameView extends View implements View.OnTouchListener, EventLabelCa
     private Bitmap mBitmap;
     private Canvas mCanvas;
 
-    private static int DOT_PAINT_RADIUS = 10;
-    private static int LINE_PAINT_WIDTH = 6;
+    private static int DOT_PAINT_RADIUS = 12;
+    private static int LINE_PAINT_WIDTH = 8;
 
     // Youth basketball court dimensions in feet
     private static int COURT_WIDTH = 94;
@@ -356,12 +356,16 @@ public class GameView extends View implements View.OnTouchListener, EventLabelCa
 
     private void selectEventLabel(final float x, final float y, final EventLabelCallback callback) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle("Label event")
-                .setItems(R.array.event_labels, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        callback.onEventLabelled(x, y, which);
-                    }
-                })
+//        int selected = 0;
+        builder.setTitle("Label event");
+        // or whatever you want
+      builder.setSingleChoiceItems(R.array.event_labels, -1, new DialogInterface.OnClickListener() {
+          //                .setItems(R.array.event_labels, new DialogInterface.OnClickListener() {
+          public void onClick(DialogInterface dialog, int which) {
+              dialog.dismiss();
+              callback.onEventLabelled(x, y, which);
+          }
+      })
                 .show();
     }
 
