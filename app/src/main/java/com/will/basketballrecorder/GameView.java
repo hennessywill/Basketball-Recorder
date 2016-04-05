@@ -41,22 +41,25 @@ public class GameView extends View implements View.OnTouchListener, EventLabelCa
     private static int LANE_HEIGHT = 12;
     private static int FREETHROW_RADIUS = 6;
 
-    private final String GAME_NAME = "bobs game";
-    private final String FILE_NAME = "data.json";
+    private String gameName;
+    private String FILE_NAME = "data.json";
 
     public GameView(Context context) {
         super(context);
         setOnTouchListener(this);
+        gameName = ((GameActivity) getContext()).getGameName();
     }
 
     public GameView(Context context, AttributeSet attrs) {
         super(context, attrs);
         setOnTouchListener(this);
+        gameName = ((GameActivity) getContext()).getGameName();
     }
 
     public GameView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         setOnTouchListener(this);
+        gameName = ((GameActivity) getContext()).getGameName();
     }
 
     protected void onSizeChanged(int w, int h, int oldW, int oldH) {
@@ -82,7 +85,7 @@ public class GameView extends View implements View.OnTouchListener, EventLabelCa
                 jsonReader.nextName();
                 String name = jsonReader.nextString();
                 System.out.println(name);
-                if (Objects.equals(name, GAME_NAME)) {
+                if (Objects.equals(name, gameName)) {
                     jsonReader.nextName();
                     jsonReader.beginArray();
                     while (jsonReader.hasNext()) {
@@ -143,7 +146,7 @@ public class GameView extends View implements View.OnTouchListener, EventLabelCa
                 JsonWriter jsonWriter = new JsonWriter(osw);
                 jsonWriter.beginArray();
                 jsonWriter.beginObject();
-                jsonWriter.name("name").value(GAME_NAME);
+                jsonWriter.name("name").value(gameName);
                 jsonWriter.name("events");
                 jsonWriter.beginArray();
                 jsonWriter.beginObject();
@@ -193,7 +196,7 @@ public class GameView extends View implements View.OnTouchListener, EventLabelCa
                     jsonReader.endObject();
                     jsonWriter.endObject();
                 }
-                if (Objects.equals(game_value, GAME_NAME)) {
+                if (Objects.equals(game_value, gameName)) {
                     jsonWriter.beginObject();
                     jsonWriter.name("action").value(action);
                     jsonWriter.name("x").value(x);
@@ -254,13 +257,13 @@ public class GameView extends View implements View.OnTouchListener, EventLabelCa
         mCanvas.drawCircle(originX+courtPixelWidth/2,
                 originY+courtPixelHeight/2, scale*HALF_COURT_RADIUS, linePaint);
 
-        // freethrow lane
+        // free throw lane
         mCanvas.drawRect(originX, originY+courtPixelHeight/2-scale*LANE_HEIGHT/2,
                 originX+scale*LANE_WIDTH, originY+courtPixelHeight/2+scale*LANE_HEIGHT/2, linePaint);
         mCanvas.drawRect(originX+courtPixelWidth-scale*LANE_WIDTH, originY+courtPixelHeight/2-scale*LANE_HEIGHT/2,
                 originX+courtPixelWidth, originY+courtPixelHeight/2+scale*LANE_HEIGHT/2, linePaint);
 
-        // freethrow circle
+        // free throw circle
         mCanvas.drawCircle(originX+scale*LANE_WIDTH, originY+courtPixelHeight/2, scale*FREETHROW_RADIUS, linePaint);
         mCanvas.drawCircle(originX+courtPixelWidth-scale*LANE_WIDTH, originY+courtPixelHeight/2, scale*FREETHROW_RADIUS, linePaint);
 
@@ -344,7 +347,6 @@ public class GameView extends View implements View.OnTouchListener, EventLabelCa
         mCanvas.drawCircle(x, y, DOT_PAINT_RADIUS, mPaint);
         invalidate();
         saveAction(action, x, y);
-        // TODO:  save the coordinates and event type into a file (JSON, SQLlite, or custom format)
     }
 
     private void selectEventLabel(final float x, final float y, final EventLabelCallback callback) {

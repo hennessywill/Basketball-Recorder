@@ -5,11 +5,17 @@ import android.os.Bundle;
 
 public class GameActivity extends Activity {
 
-    // Actions:  shot, miss, penalty, assist,
+    private String gameName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        gameName = getIntent().getStringExtra("game_name");
         setContentView(R.layout.activity_game);
     }
+
+    public String getGameName() {
+        return gameName;
+    }
+
 }
