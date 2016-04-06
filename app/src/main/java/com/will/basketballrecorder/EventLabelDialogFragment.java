@@ -43,7 +43,6 @@ public class EventLabelDialogFragment extends DialogFragment {
         v.findViewById(R.id.button_score).setOnClickListener(btnListener);
         v.findViewById(R.id.button_miss).setOnClickListener(btnListener);
         v.findViewById(R.id.button_assist).setOnClickListener(btnListener);
-        v.findViewById(R.id.button_foul).setOnClickListener(btnListener);
         v.findViewById(R.id.button_rebound).setOnClickListener(btnListener);
         v.findViewById(R.id.button_steal).setOnClickListener(btnListener);
         return v;

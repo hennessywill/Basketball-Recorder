@@ -2,34 +2,30 @@
 <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/event_label_table"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent">
 
     <TableRow
         android:id="@+id/table_row1"
         android:layout_width="fill_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" >
+        android:layout_weight="2" >
 
         <Button
             android:id="@+id/button_score"
-            android:text="@string/score"
             android:background="@color/score"
+            android:text="@string/score"
+            android:textColor="@color/event_button_text"
+            android:textSize="@dimen/event_button_big_text_size"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="1"/>
 
         <Button
             android:id="@+id/button_miss"
-            android:text="@string/miss"
             android:background="@color/miss"
-            android:layout_width="0dp"
-            android:layout_height="fill_parent"
-            android:layout_weight="1"/>
-
-        <Button
-            android:id="@+id/button_assist"
-            android:text="@string/assist"
-            android:background="@color/assist"
+            android:text="@string/miss"
+            android:textColor="@color/event_button_text"
+            android:textSize="@dimen/event_button_big_text_size"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="1"/>
@@ -42,25 +38,31 @@
         android:layout_weight="1" >
 
         <Button
-            android:id="@+id/button_foul"
-            android:text="@string/foul"
-            android:background="@color/foul"
-            android:layout_width="0dp"
-            android:layout_height="fill_parent"
-            android:layout_weight="1"/>
-
-        <Button
-            android:id="@+id/button_rebound"
-            android:text="@string/rebound"
-            android:background="@color/rebound"
+            android:id="@+id/button_assist"
+            android:background="@color/assist"
+            android:textColor="@color/event_button_text"
+            android:textSize="@dimen/event_button_small_text_size"
+            android:text="@string/assist"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="1"/>
 
         <Button
             android:id="@+id/button_steal"
-            android:text="@string/steal"
             android:background="@color/steal"
+            android:text="@string/steal"
+            android:textColor="@color/event_button_text"
+            android:textSize="@dimen/event_button_small_text_size"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"/>
+
+        <Button
+            android:id="@+id/button_rebound"
+            android:background="@color/rebound"
+            android:text="@string/rebound"
+            android:textColor="@color/event_button_text"
+            android:textSize="@dimen/event_button_small_text_size"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="1"/>

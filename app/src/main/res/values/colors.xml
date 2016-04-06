@@ -4,12 +4,12 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
 
-    <color name="court">#795548</color>
-    <color name="lines">#FFFFFF</color>
-    <color name="score">#1abc9c</color>
-    <color name="miss">#34495e</color>
-    <color name="assist">#e74c3c</color>
-    <color name="rebound">#9b59b6</color>
-    <color name="steal">#f39c12</color>
-    <color name="foul">#3498db</color>
+    <color name="court">#FFCD94</color>
+    <color name="lines">#000000</color>
+    <color name="score">#4CAF50</color>
+    <color name="miss">#F44336</color>
+    <color name="assist">#2196F3</color>
+    <color name="rebound">#9C27B0</color>
+    <color name="steal">#37474F</color>
+    <color name="event_button_text">#FFFFFF</color>
 </resources>

@@ -9,7 +9,6 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -21,10 +20,12 @@ public class GameView extends View implements View.OnTouchListener, OnEventLabel
     private Bitmap mBitmap;
     private Canvas mCanvas;
 
-    private static int DOT_PAINT_RADIUS = 12;
+    // scale factor from feet to pixels
+    private float scale;
 
     // Youth basketball court dimensions in feet
-    private static int LINE_PAINT_WIDTH = 8;
+    private static int DOT_PAINT_RADIUS = 1;
+    private static float LINE_PAINT_WIDTH = 0.3f;
     private static int COURT_WIDTH = 94;
     private static int COURT_HEIGHT = 50;
     private static int HALF_COURT_RADIUS = 6;
@@ -63,28 +64,23 @@ public class GameView extends View implements View.OnTouchListener, OnEventLabel
         mBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         mCanvas = new Canvas(mBitmap);
         mPaint = new Paint();
-        initCourtLines();
+        scale = (int) Math.min(w/(float)COURT_WIDTH, h/(float)COURT_HEIGHT);
+        initCourtLines(w, h);
         initHistoricalGameEvents();
     }
 
     /*
      *  Manually draw basketball court lines on the canvas
      */
-    private void initCourtLines() {
-        int w = mBitmap.getWidth();
-        int h = mBitmap.getHeight();
-
-        // calculate scale factor from feet to pixels
-        int scale = (int) Math.min(w/(float)COURT_WIDTH, h/(float)COURT_HEIGHT);
-
+    private void initCourtLines(int w, int h) {
         Paint linePaint = new Paint();
         linePaint.setColor(ContextCompat.getColor(getContext(), R.color.lines));
-        linePaint.setStrokeWidth(LINE_PAINT_WIDTH);
+        linePaint.setStrokeWidth(scale*LINE_PAINT_WIDTH);
         linePaint.setStyle(Paint.Style.STROKE);
         linePaint.setAntiAlias(true);
 
-        int courtPixelWidth = scale*COURT_WIDTH;
-        int courtPixelHeight = scale*COURT_HEIGHT;
+        int courtPixelWidth = (int) scale*COURT_WIDTH;
+        int courtPixelHeight = (int) scale*COURT_HEIGHT;
 
         // translate the court from (0,0) to (originX, originY) so it is centered on screen
         int originX = (w - courtPixelWidth) / 2;
@@ -116,7 +112,7 @@ public class GameView extends View implements View.OnTouchListener, OnEventLabel
         mCanvas.drawCircle(originX+scale*LANE_WIDTH, originY+courtPixelHeight/2, scale*FREETHROW_RADIUS, linePaint);
         mCanvas.drawCircle(originX+courtPixelWidth-scale*LANE_WIDTH, originY+courtPixelHeight/2, scale*FREETHROW_RADIUS, linePaint);
 
-        int sidelineToThreePointLine = (courtPixelHeight - scale*2*THREE_POINT_RADIUS) / 2;
+        int sidelineToThreePointLine = (int) (courtPixelHeight - scale*2*THREE_POINT_RADIUS) / 2;
         RectF threePointArc = new RectF(originX + scale*(BASELINE_TO_CENTER_HOOP-THREE_POINT_RADIUS),
                 originY + sidelineToThreePointLine,
                 originX + scale*(BASELINE_TO_CENTER_HOOP + THREE_POINT_RADIUS),
@@ -143,7 +139,6 @@ public class GameView extends View implements View.OnTouchListener, OnEventLabel
      *  Read in the JSON file and populate the screen with past game events
      */
     private void initHistoricalGameEvents() {
-        Log.e("NAME", gameName);
         ArrayList<GameEvent> eventList = GameJsonUtils.initGameEvents(getContext(), gameName, fileName);
         for (GameEvent event : eventList) {
             drawEventCircle(event.getAction(), event.getX(), event.getY());
@@ -202,14 +197,11 @@ public class GameView extends View implements View.OnTouchListener, OnEventLabel
             case "steal":
                 mPaint.setColor(ContextCompat.getColor(getContext(), R.color.steal));
                 break;
-            case "foul":
-                mPaint.setColor(ContextCompat.getColor(getContext(), R.color.foul));
-                break;
             default:
                 mPaint.setColor(ContextCompat.getColor(getContext(), R.color.court));
                 break;
         }
-        mCanvas.drawCircle(x, y, DOT_PAINT_RADIUS, mPaint);
+        mCanvas.drawCircle(x, y, scale*DOT_PAINT_RADIUS, mPaint);
     }
 
     /*
