@@ -1,9 +1,9 @@
 package com.will.basketballrecorder;
 
-import android.app.Activity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 
-public class GameActivity extends Activity {
+public class GameActivity extends FragmentActivity {
 
     private String gameName;
     private String fileName;

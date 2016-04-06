@@ -2,4 +2,11 @@
     <string name="app_name">Basketball Recorder</string>
     <string name="action_settings">Settings</string>
     <string name="history_list_title">Basketball Records</string>
+
+    <string name="score">score</string>
+    <string name="miss">miss</string>
+    <string name="assist">assist</string>
+    <string name="foul">foul</string>
+    <string name="rebound">rebound</string>
+    <string name="steal">steal</string>
 </resources>

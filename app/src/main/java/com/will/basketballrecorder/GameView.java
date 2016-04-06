@@ -1,12 +1,12 @@
 package com.will.basketballrecorder;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -15,7 +15,7 @@ import android.view.View;
 
 import java.util.ArrayList;
 
-public class GameView extends View implements View.OnTouchListener, EventLabelCallback {
+public class GameView extends View implements View.OnTouchListener, OnEventLabelledListener {
 
     private Paint mPaint;
     private Bitmap mBitmap;
@@ -67,6 +67,9 @@ public class GameView extends View implements View.OnTouchListener, EventLabelCa
         initHistoricalGameEvents();
     }
 
+    /*
+     *  Manually draw basketball court lines on the canvas
+     */
     private void initCourtLines() {
         int w = mBitmap.getWidth();
         int h = mBitmap.getHeight();
@@ -113,7 +116,6 @@ public class GameView extends View implements View.OnTouchListener, EventLabelCa
         mCanvas.drawCircle(originX+scale*LANE_WIDTH, originY+courtPixelHeight/2, scale*FREETHROW_RADIUS, linePaint);
         mCanvas.drawCircle(originX+courtPixelWidth-scale*LANE_WIDTH, originY+courtPixelHeight/2, scale*FREETHROW_RADIUS, linePaint);
 
-
         int sidelineToThreePointLine = (courtPixelHeight - scale*2*THREE_POINT_RADIUS) / 2;
         RectF threePointArc = new RectF(originX + scale*(BASELINE_TO_CENTER_HOOP-THREE_POINT_RADIUS),
                 originY + sidelineToThreePointLine,
@@ -144,30 +146,7 @@ public class GameView extends View implements View.OnTouchListener, EventLabelCa
         Log.e("NAME", gameName);
         ArrayList<GameEvent> eventList = GameJsonUtils.initGameEvents(getContext(), gameName, fileName);
         for (GameEvent event : eventList) {
-            switch(event.getAction()) {
-                case "score":
-                    mPaint.setColor(ContextCompat.getColor(getContext(), R.color.score));
-                    break;
-                case "miss":
-                    mPaint.setColor(ContextCompat.getColor(getContext(), R.color.miss));
-                    break;
-                case "assist":
-                    mPaint.setColor(ContextCompat.getColor(getContext(), R.color.assist));
-                    break;
-                case "rebound":
-                    mPaint.setColor(ContextCompat.getColor(getContext(), R.color.rebound));
-                    break;
-                case "steal":
-                    mPaint.setColor(ContextCompat.getColor(getContext(), R.color.steal));
-                    break;
-                case "foul":
-                    mPaint.setColor(ContextCompat.getColor(getContext(), R.color.foul));
-                    break;
-                default:
-                    mPaint.setColor(ContextCompat.getColor(getContext(), R.color.court));
-                    break;
-            }
-            mCanvas.drawCircle(event.getX(), event.getY(), DOT_PAINT_RADIUS, mPaint);
+            drawEventCircle(event.getAction(), event.getX(), event.getY());
         }
         invalidate();
     }
@@ -185,7 +164,7 @@ public class GameView extends View implements View.OnTouchListener, EventLabelCa
 
         switch(action) {
             case MotionEvent.ACTION_UP:
-                selectEventLabel(x, y, this);
+                showEventLabelDialogFragment(x, y);
                 break;
             default:
                 break;
@@ -193,53 +172,54 @@ public class GameView extends View implements View.OnTouchListener, EventLabelCa
         return true;
     }
 
-    public void onEventLabelled(float x, float y, int which) {
-        String action = null;
-        switch(which) {
-            case 0:
-                action = "score";
+    /*
+     *  Callback method from the DialogFragment. Write event to JSON file.
+     */
+    public void onEventLabelled(String action, float x, float y) {
+        drawEventCircle(action, x, y);
+        invalidate();
+        GameEvent event = new GameEvent(action, x, y);
+        GameJsonUtils.saveGameEvent(getContext(), gameName, fileName, event);
+    }
+
+    /*
+     *  Draw an event marker on the canvas
+     */
+    private void drawEventCircle(String action, float x, float y) {
+        switch(action) {
+            case "score":
                 mPaint.setColor(ContextCompat.getColor(getContext(), R.color.score));
                 break;
-            case 1:
-                action = "miss";
+            case "miss":
                 mPaint.setColor(ContextCompat.getColor(getContext(), R.color.miss));
                 break;
-            case 2:
-                action = "assist";
+            case "assist":
                 mPaint.setColor(ContextCompat.getColor(getContext(), R.color.assist));
                 break;
-            case 3:
-                action = "rebound";
+            case "rebound":
                 mPaint.setColor(ContextCompat.getColor(getContext(), R.color.rebound));
                 break;
-            case 4:
-                action = "steal";
+            case "steal":
                 mPaint.setColor(ContextCompat.getColor(getContext(), R.color.steal));
                 break;
-            case 5:
-                action = "foul";
+            case "foul":
                 mPaint.setColor(ContextCompat.getColor(getContext(), R.color.foul));
                 break;
             default:
                 mPaint.setColor(ContextCompat.getColor(getContext(), R.color.court));
                 break;
         }
-
         mCanvas.drawCircle(x, y, DOT_PAINT_RADIUS, mPaint);
-        invalidate();
-        GameEvent event = new GameEvent(action, x, y);
-        GameJsonUtils.saveGameEvent(getContext(), gameName, fileName, event);
     }
 
-    private void selectEventLabel(final float x, final float y, final EventLabelCallback callback) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle("Label event");
-        builder.setSingleChoiceItems(R.array.event_labels, -1, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                callback.onEventLabelled(x, y, which);
-            }
-        }).show();
+    /*
+     *  Create and show the DialogFragment for selecting event action
+     */
+    private void showEventLabelDialogFragment(final float x, final float y) {
+        FragmentTransaction ft = ((FragmentActivity) getContext()).getSupportFragmentManager().beginTransaction();
+        EventLabelDialogFragment fragment = EventLabelDialogFragment.newInstance();
+        fragment.init(this, x, y);
+        fragment.show(ft, "EventLabelDialogFragment");
     }
 
 }
