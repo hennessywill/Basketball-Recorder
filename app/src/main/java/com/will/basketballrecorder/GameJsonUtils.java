@@ -11,6 +11,7 @@ import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -220,6 +221,8 @@ public class GameJsonUtils {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        // Reverse list so most recent games occur first
+        Collections.reverse(gameNames);
         return gameNames;
     }
 
