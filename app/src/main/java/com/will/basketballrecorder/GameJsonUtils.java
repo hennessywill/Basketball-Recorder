@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Created by willhennessy on 4/5/16.
@@ -41,7 +40,7 @@ public class GameJsonUtils {
                 jsonReader.nextName();
                 String name = jsonReader.nextString();
                 // Game currently being displayed
-                if (Objects.equals(name, gameName)) {
+                if (name.equals(gameName)) {
                     jsonReader.nextName();
                     jsonReader.beginArray();
                     // Each event in a game
@@ -133,7 +132,7 @@ public class GameJsonUtils {
                     jsonWriter.endObject();
                 }
                 // Add event to end of array
-                if (Objects.equals(game_value, gameName)) {
+                if (game_value.equals(gameName)) {
                     writeEvent(event, jsonWriter);
                     eventAdded = true;
                 }
@@ -246,7 +245,7 @@ public class GameJsonUtils {
                 jsonReader.nextName();
                 String name = jsonReader.nextString();
                 // Game currently being displayed
-                if (Objects.equals(name, gameName)) {
+                if (name.equals(gameName)) {
                     jsonReader.skipValue();
                     jsonReader.beginArray();
                     // Each event in a game

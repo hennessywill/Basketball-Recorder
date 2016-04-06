@@ -3,9 +3,15 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+
     <dimen name="event_square_horizontal_spacing">0dp</dimen>
     <dimen name="event_square_vertical_spacing">0dp</dimen>
     <dimen name="event_button_big_text_size">28sp</dimen>
     <dimen name="event_button_small_text_size">20sp</dimen>
-    <integer name="num_event_columns">3</integer>
+
+    <dimen name="stats_label_text_size">24sp</dimen>
+    <dimen name="stats_number_text_size">24sp</dimen>
+    <dimen name="stats_row_padding">20dp</dimen>
+    <dimen name="stats_row_margin">4dp</dimen>
+
 </resources>

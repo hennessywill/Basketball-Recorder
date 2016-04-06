@@ -1,84 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.will.basketballrecorder.GameActivity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.will.basketballrecorder.StatsActivity">
+    android:stretchColumns="0,1">
 
-    <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:stretchColumns="1">
+    <TableRow
+        android:background="@color/score"
+        android:padding="@dimen/stats_row_padding"
+        android:layout_margin="@dimen/stats_row_margin">
+        <TextView
+            android:layout_column="0"
+            android:text="@string/stat_label_points"
+            android:textSize="@dimen/stats_label_text_size"
+            android:textColor="@color/event_button_text"/>
+        <TextView
+            android:id="@+id/points"
+            android:layout_column="1"
+            android:textSize="@dimen/stats_label_text_size"
+            android:textColor="@color/event_button_text" />
+    </TableRow>
 
-        <View
-            android:layout_height="2dip"
-            android:background="#FF909090" />
+    <TableRow
+        android:background="@color/miss"
+        android:padding="@dimen/stats_row_padding"
+        android:layout_margin="@dimen/stats_row_margin">
+        <TextView
+            android:layout_column="0"
+            android:text="@string/stat_label_shooting_percentage"
+            android:textSize="@dimen/stats_label_text_size"
+            android:textColor="@color/event_button_text" />
+        <TextView
+            android:id="@+id/percentage"
+            android:layout_column="1"
+            android:textSize="@dimen/stats_label_text_size"
+            android:textColor="@color/event_button_text"/>
+    </TableRow>
 
-        <TableRow>
-            <TextView
-                android:layout_column="1"
-                android:text="Points"
-                android:padding="3dip" />
-            <TextView
-                android:text="0"
-                android:gravity="right"
-                android:padding="3dip"
-                android:id="@+id/points_scored"/>
-        </TableRow>
+    <TableRow
+        android:background="@color/assist"
+        android:padding="@dimen/stats_row_padding"
+        android:layout_margin="@dimen/stats_row_margin">
+        <TextView
+            android:layout_column="0"
+            android:text="@string/stat_label_assist"
+            android:textSize="@dimen/stats_label_text_size"
+            android:textColor="@color/event_button_text"/>
+        <TextView
+            android:id="@+id/assists"
+            android:layout_column="1"
+            android:textSize="@dimen/stats_label_text_size"
+            android:textColor="@color/event_button_text"/>
+    </TableRow>
 
-        <TableRow>
-            <TextView
-                android:layout_column="1"
-                android:text="Shooting Percentage"
-                android:padding="3dip" />
-            <TextView
-                android:text="0"
-                android:gravity="right"
-                android:padding="3dip"
-                android:id="@+id/percentage"/>
-        </TableRow>
+    <TableRow
+        android:background="@color/rebound"
+        android:padding="@dimen/stats_row_padding"
+        android:layout_margin="@dimen/stats_row_margin">
+        <TextView
+            android:layout_column="0"
+            android:text="@string/stat_label_rebound"
+            android:textSize="@dimen/stats_label_text_size"
+            android:textColor="@color/event_button_text"/>
+        <TextView
+            android:id="@+id/rebounds"
+            android:layout_column="1"
+            android:textSize="@dimen/stats_label_text_size"
+            android:textColor="@color/event_button_text"/>
+    </TableRow>
 
-        <TableRow>
-            <TextView
-                android:layout_column="1"
-                android:text="@string/assist"
-                android:padding="3dip" />
-            <TextView
-                android:text="0"
-                android:gravity="right"
-                android:padding="3dip"
-                android:id="@+id/assists"/>
-        </TableRow>
+    <TableRow
+        android:background="@color/steal"
+        android:padding="@dimen/stats_row_padding"
+        android:layout_margin="@dimen/stats_row_margin">
+        <TextView
+            android:layout_column="0"
+            android:text="@string/stat_label_steal"
+            android:textSize="@dimen/stats_label_text_size"
+            android:textColor="@color/event_button_text"/>
+        <TextView
+            android:id="@+id/steals"
+            android:layout_column="1"
+            android:textSize="@dimen/stats_label_text_size"
+            android:textColor="@color/event_button_text"/>
+    </TableRow>
 
-        <TableRow>
-            <TextView
-                android:layout_column="1"
-                android:text="@string/rebound"
-                android:padding="3dip" />
-            <TextView
-                android:text="0"
-                android:gravity="right"
-                android:padding="3dip"
-                android:id="@+id/rebounds"/>
-        </TableRow>
+    <TableRow
+        android:gravity="center">
+        <Button
+            android:text="@string/email_stats"
+            android:onClick="sendStatsEmail"/>
+    </TableRow>
 
-        <TableRow>
-            <TextView
-                android:layout_column="1"
-                android:text="Steals"
-                android:padding="3dip" />
-            <TextView
-                android:text="0"
-                android:gravity="right"
-                android:padding="3dip"
-                android:id="@+id/steals"/>
-        </TableRow>
-
-    </TableLayout>
-
-
-</RelativeLayout>
+</TableLayout>
